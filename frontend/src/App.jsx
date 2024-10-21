@@ -7,14 +7,12 @@ import Subscription_channel from "./pages/Subscription_channel";
 
 import { Not_found } from "./pages/Not_found";
 import MantineLayout from "./layouts/MantineLayout";
-import AppProvider from './providers/AppProvider';
 import AddPackage from './pages/AddPackage';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <AppProvider>
           <MantineLayout>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -23,7 +21,6 @@ function App() {
               <Route path="*" element={<Not_found />} />
             </Routes>
           </MantineLayout>
-        </AppProvider>
       </BrowserRouter>
     </div >
   );
