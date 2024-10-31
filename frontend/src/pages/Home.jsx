@@ -1,8 +1,15 @@
 import React from 'react';
 import { Center, Grid, Image, Stack, Title, Text, Button } from '@mantine/core';
 import MovieScroll from './MovieScroll';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    navigate('/add-package');
+  }
+
   return (
     <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh' }}>
       <Center style={{ height: '70vh', position: 'relative' }}>
@@ -24,7 +31,7 @@ const Home = () => {
         <Center>
           <div style={{ display: 'flex', gap: '1rem', padding: '1rem', overflowX: 'auto' }}>
             {['Trending', 'Movies', 'Series', 'Gaming', 'Education', 'Technology'].map((tab) => (
-              <Button key={tab} variant="subtle" color="gray.4">
+              <Button key={tab} variant="subtle" color="gray.4" onClick={handleNavigation}>
                 {tab}
               </Button>
             ))}

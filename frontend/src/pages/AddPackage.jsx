@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Card, Grid, Group, NumberInput, TextInput, Title } from "@mantine/core"
+import { Box, Button, Card, Grid, Group, NumberInput, TextInput, Select, Title } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import {useAppContext} from '../providers/AppProvider';
 import { showNotification } from '@mantine/notifications';
@@ -54,7 +54,8 @@ const AddPackage = () => {
         <form onSubmit={form.onSubmit(values => handleCreatePackage())}>
           <Grid>
             <Grid.Col span={{ xs: 12 }}>
-              <TextInput label="Package Title" placeholder='Best package' {...form.getInputProps('title')} radius={'md'} />
+              <Select label="Package Title" Placeholder="Select a Package" data={['Movies', 'Series', 'Gaming', 'Education', 'Trending']}
+              {...form.getInputProps('title')} radius="md"/>
             </Grid.Col>
             <Grid.Col span={{ xs: 6 }}>
               <NumberInput hideControls label="Price" placeholder='2,500' {...form.getInputProps('price')} radius={'md'} />
