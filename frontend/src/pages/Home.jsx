@@ -1,11 +1,10 @@
 import React from 'react';
 import { Center, Grid, Image, Stack, Title, Text, Button } from '@mantine/core';
-import MovieScroll from './MovieScroll'; // Assuming this component is in the same directory
+import MovieScroll from './MovieScroll';
 
 const Home = () => {
   return (
     <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh' }}>
-      {/* Hero Section */}
       <Center style={{ height: '70vh', position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(75,0,130,0.5), rgba(138,43,226,0.5), rgba(255,20,147,0.5))' }} />
         <Stack align="center" spacing="md" style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
@@ -21,7 +20,6 @@ const Home = () => {
         </Stack>
       </Center>
 
-      {/* Category Tabs */}
       <div style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 20 }}>
         <Center>
           <div style={{ display: 'flex', gap: '1rem', padding: '1rem', overflowX: 'auto' }}>
@@ -34,9 +32,7 @@ const Home = () => {
         </Center>
       </div>
 
-      {/* Main Content */}
       <Stack spacing="xl" style={{ padding: '2rem' }}>
-        {/* Featured Section */}
         <Stack>
           <Title order={2} style={{ color: 'white' }}>
             Featured Content
@@ -44,7 +40,6 @@ const Home = () => {
           <MovieScroll />
         </Stack>
 
-        {/* Popular Channels */}
         <Title order={2} style={{ color: 'white' }}>
           Popular Channels
         </Title>

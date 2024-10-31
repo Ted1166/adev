@@ -1,0 +1,25 @@
+.movie-scroll-container {
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 1rem 0;
+  }
+  
+  .movie-scroll-track {
+    display: inline-flex;
+    animation: scrollLeft 15s linear infinite;
+  }
+  
+  .movie-item {
+    flex: none;
+    margin-right: 1rem;
+  }
+  
+  @keyframes scrollLeft {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  
