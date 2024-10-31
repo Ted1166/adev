@@ -10,14 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mantine/core": "^7.12.1",
+    "@mantine/carousel": "^7.13.4",
+    "@mantine/core": "^7.13.4",
     "@mantine/form": "^7.12.1",
-    "@mantine/hooks": "^7.12.1",
+    "@mantine/hooks": "^7.13.4",
     "@mantine/modals": "^7.12.1",
     "@mantine/notifications": "^7.12.1",
     "@starknet-react/core": "^3.0.3",
     "@tabler/icons-react": "^3.12.0",
     "bignumber.js": "^9.1.2",
+    "embla-carousel-react": "^8.3.1",
+    "framer-motion": "^11.11.10",
     "jotai": "^2.10.1",
     "lucide-react": "^0.453.0",
     "react": "^18.3.1",
@@ -25,7 +28,8 @@
     "react-router-dom": "^6.26.1",
     "starknet": "^6.11.0",
     "starknetkit": "^1.1.9",
-    "starknetkit-latest": "npm:starknetkit@^1.1.9"
+    "starknetkit-latest": "npm:starknetkit@^1.1.9",
+    "tailwindcss": "^3.4.14"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
