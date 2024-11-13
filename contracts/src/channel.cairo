@@ -18,7 +18,9 @@ struct Packages {
 #[derive(Copy, Drop, Serde, starknet::Store)]
 struct Subscription {
     package_id: u128,
-    user: ContractAddress
+    user: ContractAddress,
+    start_date: u64,
+    expiry_date: u64
 }
 
 #[derive(Copy, Drop, Serde, starknet::Store)]
@@ -45,16 +47,20 @@ trait subscribeTrait<TContractState> {
         package_id: u128,
         user: ContractAddress,
         key: u128,
-        message_key: u128
+        message_key: u128,
+        duration: u64
     );
     fn get_message(self: @TContractState, key: u128) -> Msg;
     fn get_packages(self: @TContractState) -> Array<Packages>;
     fn create_channel(ref self: TContractState, channel_name: felt252);
+    fn has_active_subscription(self: @TContractState, user: ContractAddress, package_id: u128) -> bool;
     fn get_channel(self: @TContractState, key: u128) -> Channel;
     fn get_channels(self: @TContractState) -> Array<Channel>;
     fn get_media_file(self: @TContractState, key: u128) -> MediaFile;
     fn get_media_by_channel(self: @TContractState, channel_id: u128) -> Array<MediaFile>;
     fn create_media_file(ref self: TContractState, channel_id: u128, cid: felt252);
+    fn update_package(ref self: TContractState, package_id: u128, new_channels: felt252, new_price: u128);
+    fn is_channel_owner(self: @TContractState, channel_id: u128) -> bool;
 }
 
 #[starknet::contract]
@@ -64,17 +70,19 @@ mod Subscribe {
     // use starknet::ContractAddress;
     use starknet::get_caller_address;
     // use core::debug::PrintTrait;
+    use starknet::get_block_timestamp;
+
  
     #[storage]
     struct Storage {
-        packages: LegacyMap::<u128, Packages>,
+        packages: starknet::storage::Map::<u128, Packages>,
         packages_count: u128,
         channel_count: u128,
         media_count: u128,
-        subscriptions: LegacyMap::<u128, Subscription>,
-        messages: LegacyMap::<u128, Msg>,
-        channels: LegacyMap::<u128, Channel>,
-        media_files: LegacyMap::<u128, MediaFile>
+        subscriptions: starknet::storage::Map::<u128, Subscription>,
+        messages: starknet::storage::Map::<u128, Msg>,
+        channels: starknet::storage::Map::<u128, Channel>,
+        media_files: starknet::storage::Map::<u128, MediaFile>
     }
 
     #[constructor]
@@ -109,9 +117,12 @@ mod Subscribe {
             package_id: u128,
             user: ContractAddress,
             key: u128,
-            message_key: u128
+            message_key: u128,
+            duration: u64
         ) {
-            let user_subscribe = Subscription { package_id: package_id, user: user };
+            let start_date = get_block_timestamp();
+            let expiry_date = start_date + duration;
+            let user_subscribe = Subscription { package_id: package_id, user: user, start_date: start_date, expiry_date: expiry_date};
             let package = self.packages.read(package_id);
             if package.package_id == package_id {
                 self.subscriptions.write(key, user_subscribe);
@@ -157,6 +168,15 @@ mod Subscribe {
             self.channels.read(key)
         }
 
+        fn has_active_subscription(self: @ContractState, user: ContractAddress, package_id: u128) -> bool {
+            let subscription = self.subscriptions.read(package_id);
+            if subscription.user == user && get_block_timestamp() < subscription.expiry_date {
+                true
+            } else {
+                false
+            }
+        }
+
         fn get_channels(self: @ContractState) -> Array<Channel> {
             let mut channels = ArrayTrait::<Channel>::new();
             let total_channels = self.channel_count.read();
@@ -174,6 +194,20 @@ mod Subscribe {
             }
             channels
         }
+
+        fn update_package(ref self: ContractState, package_id: u128, new_channels: felt252, new_price: u128) {
+            let mut package = self.packages.read(package_id);
+            package.channels = new_channels;
+            package.price = new_price;
+            self.packages.write(package_id, package);
+        }
+
+        fn is_channel_owner(self: @ContractState, channel_id: u128) -> bool {
+            let channel = self.channels.read(channel_id);
+            let caller = get_caller_address();
+            channel.channel_owner == caller
+        }
+
         fn get_media_file(self: @ContractState, key: u128) -> MediaFile {
             self.media_files.read(key)
         }
@@ -209,6 +243,8 @@ mod Subscribe {
 
             self.media_files.write(media_id, MediaFile { media_id, cid, channel_id });
         }
+
+        
     }
 }
 
@@ -261,7 +297,7 @@ mod tests {
 
         contract.add_package(sub_package, channels, price);
 
-        contract.subs_package(1, user, 1, 1);
+        contract.subs_package(1, user, 1, 1, 1);
 
         let message = contract.get_message(1);
         assert(message.msg == 'Subscription successful', 'Message');
