@@ -75,14 +75,14 @@ mod Subscribe {
  
     #[storage]
     struct Storage {
-        packages: starknet::storage::Map::<u128, Packages>,
+        packages: LegacyMap::<u128, Packages>,
         packages_count: u128,
         channel_count: u128,
         media_count: u128,
-        subscriptions: starknet::storage::Map::<u128, Subscription>,
-        messages: starknet::storage::Map::<u128, Msg>,
-        channels: starknet::storage::Map::<u128, Channel>,
-        media_files: starknet::storage::Map::<u128, MediaFile>
+        subscriptions: LegacyMap::<u128, Subscription>,
+        messages: LegacyMap::<u128, Msg>,
+        channels: LegacyMap::<u128, Channel>,
+        media_files: LegacyMap::<u128, MediaFile>
     }
 
     #[constructor]
