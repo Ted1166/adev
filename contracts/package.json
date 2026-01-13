@@ -1,0 +1,19 @@
+{
+  "name": "adev-subscription-arbitrum",
+  "version": "1.0.0",
+  "description": "Decentralized Subscription Platform on Arbitrum",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.ts --network arbitrum",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network arbitrumSepolia"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.4"
+  }
+}
