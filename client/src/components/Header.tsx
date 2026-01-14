@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Wallet, LogOut, AlertTriangle} from 'lucide-react';
+import { LogOut, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '@/contexts/WalletContext';
 import { shortenAddress, formatETH } from '@/lib/wallet';
+import { AdevLogo } from '@/components/AdevLogo';
 
 export function Header() {
   const { address, balance, isCorrectNetwork, switchNetwork, disconnect } = useWallet();
@@ -21,12 +22,15 @@ export function Header() {
           transition={{ delay: 0.1 }}
           className="flex items-center gap-3"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-            <Wallet className="w-5 h-5 text-primary-foreground" />
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/10 to-blue-500/10 backdrop-blur-sm border border-emerald-500/20 flex items-center justify-center p-1">
+            <AdevLogo size={40} />
           </div>
-          <span className="text-xl font-display font-bold">
-            <span className="gradient-text">ADEV</span>
-          </span>
+          <div>
+            <span className="text-2xl font-display font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
+              ADEV
+            </span>
+            <p className="text-xs text-muted-foreground">Decentralized Subscriptions</p>
+          </div>
         </motion.div>
 
         {/* Wallet Info */}
@@ -57,7 +61,7 @@ export function Header() {
             <div className="w-px h-8 bg-border" />
             
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-sm font-mono">{shortenAddress(address || '')}</span>
             </div>
           </div>
