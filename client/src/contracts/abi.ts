@@ -24,6 +24,6 @@ export const SUBSCRIPTION_ABI = [
   "event EarningsWithdrawn(address indexed creator, uint256 indexed packageId, uint256 amount)"
 ] as const;
 
-export const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as string;
-export const CHAIN_ID = parseInt(import.meta.env.VITE_CHAIN_ID || "421614");
-export const EXPLORER_URL = import.meta.env.VITE_EXPLORER_URL as string;
+export const CONTRACT_ADDRESS = (import.meta as any).env.VITE_CONTRACT_ADDRESS as string;
+export const CHAIN_ID = parseInt((import.meta as any).env.VITE_CHAIN_ID || "421614");
+export const EXPLORER_URL = (import.meta as any).env.VITE_EXPLORER_URL as string;

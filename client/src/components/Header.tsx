@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Wallet, LogOut, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Wallet, LogOut, AlertTriangle} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '@/contexts/WalletContext';
 import { shortenAddress, formatETH } from '@/lib/wallet';

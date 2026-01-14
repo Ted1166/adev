@@ -89,19 +89,19 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const wasConnected = localStorage.getItem('walletConnected') === 'true';
-    if (wasConnected && typeof window.ethereum !== 'undefined') {
+    if (wasConnected && window.ethereum) {
       connect();
     }
   }, [connect]);
 
   useEffect(() => {
-    if (typeof window.ethereum === 'undefined') return;
+    if (!window.ethereum) return;
 
     const handleAccountsChanged = (accounts: string[]) => {
       if (accounts.length === 0) {
         disconnect();
-      } else if (accounts[0] !== state.address) {
-        setState(prev => ({ ...prev, address: accounts[0] }));
+      } else if (accounts[0] && accounts[0] !== state.address) {
+        setState(prev => ({ ...prev, address: accounts[0]! }));
         updateBalance(accounts[0]);
       }
     };
@@ -110,12 +110,16 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       window.location.reload();
     };
 
-    window.ethereum.on('accountsChanged', handleAccountsChanged);
-    window.ethereum.on('chainChanged', handleChainChanged);
+    const ethereum = window.ethereum as any;
+    ethereum.on('accountsChanged', handleAccountsChanged);
+    ethereum.on('chainChanged', handleChainChanged);
 
     return () => {
-      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-      window.ethereum.removeListener('chainChanged', handleChainChanged);
+      if (window.ethereum) {
+        const eth = window.ethereum as any;
+        eth.removeListener('accountsChanged', handleAccountsChanged);
+        eth.removeListener('chainChanged', handleChainChanged);
+      }
     };
   }, [state.address, disconnect, updateBalance]);
 

@@ -1,4 +1,9 @@
-import { BrowserProvider, JsonRpcSigner, formatEther } from 'ethers'
+import { BrowserProvider, JsonRpcSigner, formatEther, Contract, parseEther } from 'ethers'
+import { SUBSCRIPTION_ABI, CONTRACT_ADDRESS } from '@/contracts/abi'
+
+interface EthereumProvider {
+  request: (args: { method: string; params?: any[] | Record<string, any> }) => Promise<any>
+}
 
 export interface WalletState {
   address: string | null
@@ -45,7 +50,7 @@ export async function connectWallet(): Promise<{
     throw new Error('Please install MetaMask or another Web3 wallet')
   }
 
-  const provider = new BrowserProvider(window.ethereum)
+  const provider = new BrowserProvider(window.ethereum as any)
   await provider.send('eth_requestAccounts', [])
   const signer = await provider.getSigner()
   const address = await signer.getAddress()
@@ -61,13 +66,13 @@ export async function switchToArbitrum(testnet = true): Promise<void> {
   const network = testnet ? ARBITRUM_SEPOLIA_NETWORK : ARBITRUM_NETWORK
 
   try {
-    await window.ethereum.request({
+    await (window.ethereum as unknown as EthereumProvider).request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: network.chainId }],
     })
   } catch (switchError: any) {
     if (switchError.code === 4902) {
-      await window.ethereum.request({
+      await (window.ethereum as unknown as EthereumProvider).request({
         method: 'wallet_addEthereumChain',
         params: [network],
       })
@@ -80,7 +85,7 @@ export async function switchToArbitrum(testnet = true): Promise<void> {
 export async function getBalance(address: string): Promise<string> {
   if (!window.ethereum) return '0'
 
-  const provider = new BrowserProvider(window.ethereum)
+  const provider = new BrowserProvider(window.ethereum as any)
   const balance = await provider.getBalance(address)
   return formatEther(balance)
 }
@@ -88,7 +93,7 @@ export async function getBalance(address: string): Promise<string> {
 export async function getChainId(): Promise<number | null> {
   if (!window.ethereum) return null
 
-  const provider = new BrowserProvider(window.ethereum)
+  const provider = new BrowserProvider(window.ethereum as any)
   const network = await provider.getNetwork()
   return Number(network.chainId)
 }
@@ -100,4 +105,40 @@ export function shortenAddress(address: string): string {
 export function formatETH(value: string | number, decimals = 4): string {
   const num = typeof value === 'string' ? parseFloat(value) : value
   return num.toFixed(decimals)
+}
+
+export async function getProvider() {
+  if (!window.ethereum) {
+    throw new Error('MetaMask not installed')
+  }
+  return new BrowserProvider(window.ethereum as any)
+}
+
+export async function getSigner() {
+  const provider = await getProvider()
+  return await provider.getSigner()
+}
+
+export async function getContract() {
+  const signer = await getSigner()
+  return new Contract(CONTRACT_ADDRESS, SUBSCRIPTION_ABI, signer)
+}
+
+export async function createPackage(title: string, priceEth: string, channels: string[]) {
+  const contract = await getContract()
+  const price = parseEther(priceEth)
+  const tx = await (contract as any).createPackage(title, price, channels.length, channels)
+  return await tx.wait()
+}
+
+export async function subscribe(packageId: number, months: number, priceEth: string) {
+  const contract = await getContract()
+  const value = parseEther((parseFloat(priceEth) * months).toString())
+  const tx = await (contract as any).subscribe(packageId, months, true, { value })
+  return await tx.wait()
+}
+
+export async function getAllPackages() {
+  const contract = await getContract()
+  return await (contract as any).getAllActivePackages()
 }
